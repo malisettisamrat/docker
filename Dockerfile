@@ -4,13 +4,19 @@ FROM node:20
 # This creates a working directory
 WORKDIR /app
 
-# Copies all the folders and files to current working directory - ignore node_modules(.dockerignore)
-COPY . .
+# Copy all the package.json, package-lock.json and prisma files 
+# seperately as we don't change them frequently
 
-# These are the commands that we run to start the project
+COPY package* .
+COPY ./prisma .
+
+# After copying package files and prisma, we run the scripts
 RUN npm install 
 RUN npm run build
 RUN npx prisma generate
+
+# After running the scripts we will copy the remaining source code
+COPY . .
 
 EXPOSE 3000
 
